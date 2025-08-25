@@ -1,0 +1,6 @@
+@DiveApi_HostAddress = http://localhost:5234
+
+GET {{DiveApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

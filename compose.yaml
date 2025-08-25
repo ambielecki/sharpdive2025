@@ -1,0 +1,18 @@
+﻿services:
+#  diveapi:
+#    image: diveapi
+#    build:
+#      context: .
+#      dockerfile: DiveApi/Dockerfile
+
+  dive-mysql:
+    image: mysql:9.0.1
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: dive-mysql
+    ports:
+      - "33062:3306"
+    volumes:
+      - ./db-data:/var/lib/mysql
+    working_dir: /var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
