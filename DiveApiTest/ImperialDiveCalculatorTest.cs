@@ -1,5 +1,4 @@
 using DiveApi.Services.DiveCalculator;
-using DiveApi.DTO.DiveCalculator;
 
 namespace DiveApiTest;
 
@@ -15,22 +14,17 @@ public class ImperialDiveCalculatorTest
     [InlineData(150, 1, null)] // out of rec diving limit
     [InlineData(90, 25, "Q")] // NDL
     public void GetPressureGroupTest(int depth, int time, string? expected) {
-        var dto = new PressureGroupRequestDto {
-            Depth = depth,
-            Time = time,
-        };
-        var response = _imperialDiveCalculator.GetPressureGroup(dto);
+        var response = _imperialDiveCalculator.GetPressureGroup(depth, time, null);
         
         Assert.Equal(expected, response.PressureGroup);
     }
     
     [Fact]
-    public void GetPressureGroupExceedsNdlTest() {
-        var dto = new PressureGroupRequestDto {
-            Depth = 60,
-            Time = 56,
-        };
-        var response = _imperialDiveCalculator.GetPressureGroup(dto);
+    public void GetPressureGroupExceedsNdlTest()
+    {
+        const int depth = 60;
+        const int time = 56;
+        var response = _imperialDiveCalculator.GetPressureGroup(depth, time, null);
         
         Assert.Null(response.PressureGroup);
         Assert.Single(response.Warnings);
@@ -39,11 +33,9 @@ public class ImperialDiveCalculatorTest
     
     [Fact]
     public void GetPressureGroupExceedsMaxDepthTest() {
-        var dto = new PressureGroupRequestDto {
-            Depth = 160,
-            Time = 5,
-        };
-        var response = _imperialDiveCalculator.GetPressureGroup(dto);
+        const int depth = 160;
+        const int time = 5;
+        var response = _imperialDiveCalculator.GetPressureGroup(depth, time, null);
         
         Assert.Null(response.PressureGroup);
         Assert.Single(response.Warnings);
@@ -56,22 +48,15 @@ public class ImperialDiveCalculatorTest
     [InlineData(140, 8)]
     [InlineData(150, null)]
     public void GetMaxBottomTimeTest(int depth, int? expected) {
-        var dto = new MaxBottomTimeRequestDto {
-            Depth = depth,
-        };
-        
-        var response = _imperialDiveCalculator.GetMaxBottomTime(dto);
+        var response = _imperialDiveCalculator.GetMaxBottomTime(depth);
         
         Assert.Equal(expected, response.MaxBottomTime);
     }
 
     [Fact]
-    public void MaxBottomTimeExceedsMaxDepthTest() {
-        var dto = new MaxBottomTimeRequestDto {
-            Depth = 160,
-        };
-        
-        var response = _imperialDiveCalculator.GetMaxBottomTime(dto);
+    public void GetMaxBottomTimeExceedsMaxDepthTest() {
+        const int depth = 160;
+        var response = _imperialDiveCalculator.GetMaxBottomTime(depth);
         
         Assert.Null(response.MaxBottomTime);
         Assert.Single(response.Warnings);
@@ -83,12 +68,7 @@ public class ImperialDiveCalculatorTest
     [InlineData("A", 500, null)]
     [InlineData("R", 60, "F")]
     public void GetNewPressureGroupTest(string pressureGroup, int depth, string? expected) {
-        var dto = new NewPressureGroupRequestDto {
-            StartingPressureGroup = pressureGroup,
-            SurfaceIntervalMinutes = depth,
-        };
-        
-        var response = _imperialDiveCalculator.GetNewPressureGroup(dto);
+        var response = _imperialDiveCalculator.GetNewPressureGroup(pressureGroup, depth);
         
         Assert.Equal(expected, response.NewPressureGroup);
     }

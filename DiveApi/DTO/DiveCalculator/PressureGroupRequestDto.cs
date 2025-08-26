@@ -8,5 +8,5 @@ public class PressureGroupRequestDto
     public required int Depth { get; set; }
     [Required]
     public required int Time { get; set; }
-    public string? StartingPressureGroup { get; set; }
+    public int? ResidualNitrogenTime { get; set; }
 }

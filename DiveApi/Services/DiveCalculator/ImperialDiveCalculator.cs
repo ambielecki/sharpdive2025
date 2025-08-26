@@ -74,15 +74,15 @@ public class ImperialDiveCalculator : IDiveCalculator
         { "Z", [360, 179, 131, 109, 100, 91, 84, 77, 71, 65, 59, 54, 49, 44, 40, 35, 31, 28, 24, 20, 17, 14, 11, 8, 5, 2] },
     };
     
-    public PressureGroupResponseDto GetPressureGroup(PressureGroupRequestDto pressureGroupRequest) {
-        if (pressureGroupRequest.Depth > MaxDepth) {
+    public PressureGroupResponseDto GetPressureGroup(int depth, int time, int? residualNitrogenTime = null) {
+        if (depth > MaxDepth) {
             _warnings.Add(ExceedsMaxDepth);
             
             return new PressureGroupResponseDto(null, _warnings);
         }
         
-        var depthKey = GetTableDepthKey(pressureGroupRequest.Depth);
-        var pressureGroup = GetPressureGroupFromTableOne(depthKey, pressureGroupRequest.Time);
+        var depthKey = GetTableDepthKey(depth);
+        var pressureGroup = GetPressureGroupFromTableOne(depthKey, time);
 
         if (pressureGroup == null) {
             _warnings.Add(ExceedsNdl);
@@ -93,14 +93,14 @@ public class ImperialDiveCalculator : IDiveCalculator
         return new PressureGroupResponseDto(pressureGroup, _warnings);
     }
     
-    public MaxBottomTimeResponseDto GetMaxBottomTime(MaxBottomTimeRequestDto maxBottomTimeRequest) {
-        if (maxBottomTimeRequest.Depth > MaxDepth) {
+    public MaxBottomTimeResponseDto GetMaxBottomTime(int depth) {
+        if (depth > MaxDepth) {
             _warnings.Add(ExceedsMaxDepth);
             
             return new MaxBottomTimeResponseDto(null, _warnings);
         }
 
-        var depthKey = GetTableDepthKey(maxBottomTimeRequest.Depth);
+        var depthKey = GetTableDepthKey(depth);
         int? maxBottomTime = null;
 
         if (depthKey != null) {
@@ -115,8 +115,8 @@ public class ImperialDiveCalculator : IDiveCalculator
         return new MaxBottomTimeResponseDto(maxBottomTime, _warnings);
     }
     
-    public NewPressureGroupResponseDto GetNewPressureGroup(NewPressureGroupRequestDto newPressureGroupRequest) {
-        var startingPressureGroup = newPressureGroupRequest.StartingPressureGroup.ToUpper();;
+    public NewPressureGroupResponseDto GetNewPressureGroup(string startingPressureGroup, int surfaceInterval) {
+        startingPressureGroup = startingPressureGroup.ToUpper();;
         if (startingPressureGroup.Length > 1) {
             _warnings.Add("Starting Pressure Group Must Be A Single Letter");
             
@@ -128,7 +128,7 @@ public class ImperialDiveCalculator : IDiveCalculator
         int? key = null;
 
         for (var i = 0; i < surfaceIntervalTimes.Count; i++) {
-            if (surfaceIntervalTimes[i] > newPressureGroupRequest.SurfaceIntervalMinutes) {
+            if (surfaceIntervalTimes[i] > surfaceInterval) {
                 key = i;
             }
         }

@@ -7,5 +7,5 @@ public class NewPressureGroupRequestDto
     [Required]
     public required string StartingPressureGroup { get; set; }
     [Required]
-    public required int SurfaceIntervalMinutes { get; set; }
+    public required int SurfaceInterval { get; set; }
 }

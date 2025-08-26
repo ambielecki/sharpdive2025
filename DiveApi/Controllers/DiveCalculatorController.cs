@@ -12,16 +12,16 @@ public class DiveCalculatorController(ILogger<DiveCalculatorController> logger, 
     
     [HttpPost("pressure-group")]
     public ActionResult<PressureGroupResponseDto> GetPressureGroup(PressureGroupRequestDto pressureGroupRequest) {
-        return Ok(diveCalculator.GetPressureGroup(pressureGroupRequest));
+        return Ok(diveCalculator.GetPressureGroup(pressureGroupRequest.Depth, pressureGroupRequest.Time, pressureGroupRequest.ResidualNitrogenTime));
     }
 
     [HttpPost("max-bottom-time")]
     public ActionResult<MaxBottomTimeResponseDto> GetMaxBottomTime(MaxBottomTimeRequestDto maxBottomTimeRequest) {
-        return Ok(diveCalculator.GetMaxBottomTime(maxBottomTimeRequest));
+        return Ok(diveCalculator.GetMaxBottomTime(maxBottomTimeRequest.Depth));
     }
     
     [HttpPost("new-pressure-group")]
     public ActionResult<NewPressureGroupResponseDto> GetNewPressureGroup(NewPressureGroupRequestDto newPressureGroupRequest) {
-        return Ok(diveCalculator.GetNewPressureGroup(newPressureGroupRequest));
+        return Ok(diveCalculator.GetNewPressureGroup(newPressureGroupRequest.StartingPressureGroup, newPressureGroupRequest.SurfaceInterval));
     }
 }
