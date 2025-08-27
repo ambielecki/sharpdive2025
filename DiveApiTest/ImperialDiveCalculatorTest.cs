@@ -43,12 +43,13 @@ public class ImperialDiveCalculatorTest
     }
 
     [Theory]
-    [InlineData(34, 205)]
-    [InlineData(35, 205)]
-    [InlineData(140, 8)]
-    [InlineData(150, null)]
-    public void GetMaxBottomTimeTest(int depth, int? expected) {
-        var response = _imperialDiveCalculator.GetMaxBottomTime(depth);
+    [InlineData(34, 0, 205)]
+    [InlineData(35, 0, 205)]
+    [InlineData(140, 0, 8)]
+    [InlineData(150, 0, null)]
+    [InlineData(140, 1, 7)]
+    public void GetMaxBottomTimeTest(int depth, int rnt, int? expected) {
+        var response = _imperialDiveCalculator.GetMaxBottomTime(depth, rnt);
         
         Assert.Equal(expected, response.MaxBottomTime);
     }

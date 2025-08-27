@@ -107,7 +107,7 @@ public class ImperialDiveCalculator : IDiveCalculator
         return new PressureGroupResponseDto(pressureGroup, _warnings);
     }
     
-    public MaxBottomTimeResponseDto GetMaxBottomTime(int depth) {
+    public MaxBottomTimeResponseDto GetMaxBottomTime(int depth, int residualNitrogenTime = 0) {
         if (depth > MaxDepth) {
             _warnings.Add(ExceedsMaxDepth);
             
@@ -126,7 +126,7 @@ public class ImperialDiveCalculator : IDiveCalculator
             }
         }
         
-        return new MaxBottomTimeResponseDto(maxBottomTime, _warnings);
+        return new MaxBottomTimeResponseDto(maxBottomTime - residualNitrogenTime, _warnings);
     }
     
     public NewPressureGroupResponseDto GetNewPressureGroup(string startingPressureGroup, int surfaceInterval) {

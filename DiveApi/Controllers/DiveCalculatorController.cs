@@ -17,7 +17,7 @@ public class DiveCalculatorController(ILogger<DiveCalculatorController> logger, 
 
     [HttpPost("max-bottom-time")]
     public ActionResult<MaxBottomTimeResponseDto> GetMaxBottomTime(MaxBottomTimeRequestDto maxBottomTimeRequest) {
-        return Ok(diveCalculator.GetMaxBottomTime(maxBottomTimeRequest.Depth));
+        return Ok(diveCalculator.GetMaxBottomTime(maxBottomTimeRequest.Depth, maxBottomTimeRequest.ResidualNitrogenTime));
     }
     
     [HttpPost("new-pressure-group")]
