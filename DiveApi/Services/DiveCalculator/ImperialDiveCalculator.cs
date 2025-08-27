@@ -73,6 +73,20 @@ public class ImperialDiveCalculator : IDiveCalculator
         { "Y", [357, 176, 128, 106, 97, 89, 81, 74, 68, 62, 56, 51, 46, 41, 37, 33, 29, 25, 21, 18, 14, 11, 8, 5, 2] },
         { "Z", [360, 179, 131, 109, 100, 91, 84, 77, 71, 65, 59, 54, 49, 44, 40, 35, 31, 28, 24, 20, 17, 14, 11, 8, 5, 2] },
     };
+
+    private readonly Dictionary<int, List<int>> _tableThree = new Dictionary<int, List<int>>() {
+        { 35, [10, 19, 25, 29, 32, 36, 40, 44, 48, 52, 57, 62, 67, 73, 79, 85, 92, 100, 108, 117, 127, 139, 152, 168, 188, 205] },
+        { 40, [9, 16, 22, 25, 27, 31, 34, 37, 40, 44, 48, 51, 55, 60, 64, 69, 74, 79, 85, 91, 97, 104, 111, 120, 129, 140] },
+        { 50, [7, 13, 17, 19, 21, 24, 26, 28, 31, 33, 36, 38, 41, 44, 47, 50, 53, 57, 60, 63, 67, 71, 75, 80] },
+        { 60, [6, 11, 14, 16, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 42, 44, 47, 49, 52, 54, 55] },
+        { 70, [5, 9, 12, 13, 15, 16, 18, 19, 21, 22, 24, 26, 27, 29, 31, 33, 34, 36, 38, 40] },
+        { 80, [4, 8, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23, 25, 26, 28, 29, 30] },
+        { 90, [4, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25] },
+        { 100, [3, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] },
+        { 110, [3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 15, 16] },
+        { 120, [3, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13] },
+        { 130, [3, 5, 6, 7, 8, 8, 9, 10] },
+    };
     
     public PressureGroupResponseDto GetPressureGroup(int depth, int time, int? residualNitrogenTime = null) {
         if (depth > MaxDepth) {
@@ -141,6 +155,34 @@ public class ImperialDiveCalculator : IDiveCalculator
 
         return new NewPressureGroupResponseDto(null, _warnings);;
     }
+
+    public ResidualNitrogenTimeResponseDto GetResidualNitrogenTime(string postIntervalPressureGroup, int depth) {
+        postIntervalPressureGroup = postIntervalPressureGroup.ToUpper();;
+        if (postIntervalPressureGroup.Length > 1) {
+            _warnings.Add("Starting Pressure Group Must Be A Single Letter");
+            
+            return new ResidualNitrogenTimeResponseDto(null, _warnings);;
+        }
+
+        if (depth > MaxDepth) {
+            _warnings.Add(ExceedsMaxDepth);
+            
+            return new ResidualNitrogenTimeResponseDto(null, _warnings);;
+        }
+        
+        var depthKey = GetTableDepthKey(depth);
+        var standardizedDepth = _tableDepths[depthKey.Value];
+        var residualNitrogenTimes = _tableThree[standardizedDepth];
+        var pressureGroupKey = GetPressureGroupKey(postIntervalPressureGroup);
+
+        if (pressureGroupKey >= residualNitrogenTimes.Count) {
+            _warnings.Add(ExceedsNdl);
+            
+            return new ResidualNitrogenTimeResponseDto(null, _warnings);;
+        }
+        
+        return new ResidualNitrogenTimeResponseDto(residualNitrogenTimes[pressureGroupKey], _warnings);;
+    }
     
     private int? GetTableDepthKey(int depth) {
         for (var i = 0; i < _tableDepths.Count; i++) {
@@ -150,6 +192,10 @@ public class ImperialDiveCalculator : IDiveCalculator
         }
 
         return null;
+    }
+
+    private int GetPressureGroupKey(string pressureGroup) {
+        return _tableGroups.IndexOf(pressureGroup);   
     }
 
     private string? GetPressureGroupFromTableOne(int? tableDepthKey, int minutes) {

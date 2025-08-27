@@ -24,4 +24,9 @@ public class DiveCalculatorController(ILogger<DiveCalculatorController> logger, 
     public ActionResult<NewPressureGroupResponseDto> GetNewPressureGroup(NewPressureGroupRequestDto newPressureGroupRequest) {
         return Ok(diveCalculator.GetNewPressureGroup(newPressureGroupRequest.StartingPressureGroup, newPressureGroupRequest.SurfaceInterval));
     }
+    
+    [HttpPost("residual-nitrogen-time")]
+    public ActionResult<ResidualNitrogenTimeResponseDto> GetResidualNitrogenTime(ResidualNitrogenTimeRequestDto residualNitrogenTimeRequest) {
+        return Ok(diveCalculator.GetResidualNitrogenTime(residualNitrogenTimeRequest.PostIntervalPressureGroup, residualNitrogenTimeRequest.Depth));
+    }
 }

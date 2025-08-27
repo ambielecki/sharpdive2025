@@ -72,4 +72,15 @@ public class ImperialDiveCalculatorTest
         
         Assert.Equal(expected, response.NewPressureGroup);
     }
+    
+    [Theory]
+    [InlineData("A", 60, 6)]
+    [InlineData("B", 35, 19)]
+    [InlineData("B", 30, 19)]
+    [InlineData("L", 120, null)]
+    public void GetResidualNitrogenTimeTest(string pressureGroup, int depth, int? expected) {
+        var response = _imperialDiveCalculator.GetResidualNitrogenTime(pressureGroup, depth);
+        
+        Assert.Equal(expected, response.ResidualNitrogenTime);
+    }
 }

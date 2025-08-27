@@ -7,4 +7,5 @@ public interface IDiveCalculator
     public PressureGroupResponseDto GetPressureGroup(int depth, int time, int? residualNitrogenTime);
     public MaxBottomTimeResponseDto GetMaxBottomTime(int depth);
     public NewPressureGroupResponseDto GetNewPressureGroup(string startingPressureGroup, int surfaceInterval);
+    public ResidualNitrogenTimeResponseDto GetResidualNitrogenTime(string postIntervalPressureGroup, int depth);
 }
